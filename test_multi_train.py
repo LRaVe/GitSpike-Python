@@ -3,7 +3,9 @@ Test multi-train spike synchronization with corrected algorithm
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
 from f_spike_synchro_multi import f_spike_synchro_multi
+from f_spike_synchro_plot import f_spike_synchro_plot
 
 # Choose dataset
 dataset = 1
@@ -44,3 +46,8 @@ print(C_matrix)
 
 print('\n=== Global SPIKE-Synchronization Index ===')
 print(f'C_global: {C_global:.4f}')
+
+# Plot results
+print('\nGenerating plot...')
+fig, ax = f_spike_synchro_plot(C_matrix, C_global)
+plt.show()
