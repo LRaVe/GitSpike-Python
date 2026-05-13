@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 """
+ISI-distance computation with auxiliary boundary spikes and plotting 
+
 Created on Thu Apr 30 14:08:16 2026
 
-@author: laure
+@author: laure WOLFF
 """
 import matplotlib.pyplot as plt
 import pyspike as spk
 from numpy import *
+
+# The testing dataset
 
 tmin, tmax = 0, 10
 num_trains = 3
@@ -27,6 +31,10 @@ spikes = [
 #    spike_trains.append(spk.SpikeTrain([0,2.1, 4.1, 6.2,10], [tmin, tmax]))
 #    spike_trains.append(spk.SpikeTrain([0,2.2, 4.2, 5.9,10], [tmin, tmax]))
 #    num_trains = len(spike_trains)
+
+"""
+The fonctions using to calculate the ISI-distance
+"""
 
 def f_spike_conform (spikes, tmin, tmax):
     n= len(spikes)
@@ -59,14 +67,17 @@ def I_A_t (spikes):
             
     return I_A_t_list
 
+"""
+The fonction to calculate the several ISI-distance and plotting the elements
+"""
 def f_ISI_distance (spikes, tmin, tmax):
      
      n = len (spikes)
      isi_values = f_ISI_calculate(spikes)
      
+     # For ONE spike-trains
      if n == 1:
         plt.figure()
-        # On ajoute la dernière valeur de ISI pour que la taille corresponde à spikes[0]
         y_plot = isi_values[0] + [isi_values[0][-1]]
         
         plt.step(spikes[0], y_plot, where='post')
@@ -79,30 +90,31 @@ def f_ISI_distance (spikes, tmin, tmax):
         plt.show()
         return avg_isi
     
+     #Initialzation for the plottings
      ISI_matrix = zeros((n, n))
      pair_data = [] # Pour stocker les évolutions temporelles
      all_t_events = [tmin, tmax]
     
-     # Parcours des paires
+     # Calculation of pairwise ISI_disatance
      for i in range(n):
          for j in range(i + 1, n):
-            # Union des temps de spikes (équivalent de unique([spikes{i}, spikes{j}]))
+            #Creatting the time axis
              t_all = sorted(list(set(spikes[i]) | set(spikes[j]) | {tmin, tmax}))
              all_t_events.extend(t_all)
             
-             i_ij_acc = 0 # Intégrale
-             it_list = [] # Évolution temporelle
+             i_ij_acc = 0 
+             it_list = [] # Times evolution
         
              for k in range(len(t_all) - 1):
                 t_mid = (t_all[k] + t_all[k+1]) / 2.0
                 
-                # Edge correction 
+                ## Edge correction ############################################
                 if not spikes[i] or t_mid < spikes[i][0]:
                     val_x = spikes[i][0] - tmin if spikes[i] else tmax - tmin
                 elif t_mid > spikes[i][-1]:
                     val_x = tmax - spikes[i][-1]
                 else:
-                    # On cherche l'indice du dernier spike avant t_mid
+                    # REsearch the index of the latest spike before t_mid
                     idx = len([s for s in spikes[i] if s <= t_mid]) - 1
                     val_x = spikes[i][idx+1] - spikes[i][idx]
                 
@@ -143,9 +155,9 @@ def f_ISI_distance (spikes, tmin, tmax):
              t_mid = (t_global[k] + t_global[k+1]) / 2.0
              indices = where(tp[:-1] <= t_mid)[0]
              if indices.size > 0:
-                idx = indices[-1] # Cas normal : on prend le dernier trouvé
+                idx = indices[-1] 
              else:
-                idx = 0 # Cas du bord : on prend le tout premier intervalle
+                idx = 0 
              I_matrix[p, k] = itp[idx]
            
      I_pop_mean = mean(I_matrix, axis=0)
@@ -158,7 +170,7 @@ def f_ISI_distance (spikes, tmin, tmax):
      plt.step(t_global, append(I_pop_mean, I_pop_mean[-1]), where='post', color='red')
      plt.title("Evolution of Population Average ISI distance")
      plt.suptitle(f"Global ISI-distance: {global_isi_val:.4f}")   
-     plt.xlim(0, 10)
+     plt.xlim(0, tmax)
      plt.ylim(0, 1)
      plt.show()
      
