@@ -1,0 +1,14 @@
+==================================================
+     DATA GENERATION REPORT - LL HYPOTHESIS       
+      Date: 2026-07-14 12:10:44
+==================================================
+
+--- Simulation Parameters ---
+Neurons (N)     : 4 (Coding/Indi: 4, Noise: 0)
+Stimuli (S)     : 4
+Repetitions (R) : 5
+Time window     : [0.0, 1.0] s
+Base rate       : 20 Hz
+Jitter (std)    : 0.005 s
+
+Dataset successfully generated and ready for distance computation.
