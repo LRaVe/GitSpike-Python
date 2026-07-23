@@ -39,12 +39,50 @@ np.random.seed(12)
 # =========================================================================
 # 2. Creation of the dataset (Figure 1)
 # =========================================================================
-print("--- Generation of the dataset (SP Hypothesis) ---")
-CellMatrix = generate_and_plot_raster(
-    num_stimuli, num_repetitions, num_indi, num_coll, 
-    num_neurons, t1, t2, base_rate, refrac, plotting, other_figs
-)
+# print("--- Generation of the dataset (SP Hypothesis) ---")
+# CellMatrix = generate_and_plot_raster(
+#     num_stimuli, num_repetitions, num_indi, num_coll, 
+#     num_neurons, t1, t2, base_rate, refrac, plotting, other_figs
+# )
 
+# # Used for debugging MATLAB code 
+# import scipy.io
+
+# CellMatrix_to_export = np.empty(CellMatrix.shape, dtype=object)
+# for n in range(num_neurons):
+#     for st in range(num_stimuli):
+#         for rp in range(num_repetitions):
+#             CellMatrix_to_export[n, st, rp] = np.array(CellMatrix[n, st, rp], dtype=np.float64).flatten()
+
+# # Save to the MATLAB's format
+# scipy.io.savemat('SP_python_data.mat', {'SP_python_data': CellMatrix_to_export}, oned_as='row')
+# print("✓ SP_python_data.mat successful exported for MATLAB !")
+
+
+# Using a dataset of MATLAB
+dataset_file = "Simulated_data.txt"
+
+CellMatrix = np.empty((num_neurons, num_stimuli, num_repetitions), dtype=object)
+
+with open(dataset_file, 'r') as f:
+    lines = f.readlines()
+
+line_idx = 0
+for s in range(num_stimuli):
+    for r in range(num_repetitions):
+        for n in range(num_neurons):
+            line = lines[line_idx].strip()
+            
+            if line:
+                # Lecture des temps de spikes
+                times = np.fromstring(line, sep=' ', dtype=np.float64)
+            else:
+                # Aucun spike
+                times = np.array([], dtype=np.float64)
+            
+            CellMatrix[n, s, r] = SpikeTrain(times, [t1, t2])
+            line_idx += 1
+            
 # =========================================================================
 # 3. Compute and plot the distances matrices and performance (Figure 2)
 # =========================================================================

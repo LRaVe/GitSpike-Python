@@ -41,7 +41,7 @@ np.random.seed(12)
 # =========================================================================
 # 2. Creation of the dataset 
 # =========================================================================
-print("--- Generation of the dataset (LL Hypothesis) ---")
+# print("--- Generation of the dataset (LL Hypothesis) ---")
 # CellMatrix = generate_and_plot_raster_ll(
 #     num_stimuli=num_stimuli,
 #     num_repetitions=num_repetitions,
@@ -57,15 +57,48 @@ print("--- Generation of the dataset (LL Hypothesis) ---")
 #     other_figs=other_figs
 # )
 
-# Other dataset
+# # Used for debugging MATLAB code 
+# import scipy.io
 
-from scipy import io
-mat_data = io.loadmat("LL.mat")
-CellMatrix = mat_data["CELL"]
+# CellMatrix_to_export = np.empty(CellMatrix.shape, dtype=object)
+# for n in range(num_neurons):
+#     for st in range(num_stimuli):
+#         for rp in range(num_repetitions):
+#             CellMatrix_to_export[n, st, rp] = np.array(CellMatrix[n, st, rp], dtype=np.float64).flatten()
 
-# print("Shape de CellMatrix :", CellMatrix.shape)
-# print("Type du premier essai :", type(CellMatrix[0, 0, 0]))
-# print("Contenu réel du premier essai [0, 0, 0] :", CellMatrix[0, 0, 0])
+# # Save to the MATLAB's format
+# scipy.io.savemat('LL_python_data.mat', {'LL_python_data': CellMatrix_to_export}, oned_as='row')
+# print("✓ LL_python_data.mat successful exported for MATLAB !")
+
+# # Other dataset
+
+# from scipy import io
+# mat_data = io.loadmat("LL.mat")
+# CellMatrix = mat_data["CELL"]
+
+# # print("Shape de CellMatrix :", CellMatrix.shape)
+# # print("Type du premier essai :", type(CellMatrix[0, 0, 0]))
+# # print("Contenu réel du premier essai [0, 0, 0] :", CellMatrix[0, 0, 0])
+
+import scipy.io
+
+# Load the MATLAB file
+mat_data = scipy.io.loadmat('LL_matlab_data.mat')
+raw_cell = mat_data['CellMatrix']
+
+num_neurons, num_stimuli, num_repetitions = raw_cell.shape
+
+# Reconstruct CellMatrix with SpikeTrain objects
+CellMatrix = np.empty((num_neurons, num_stimuli, num_repetitions), dtype=object)
+
+for n in range(num_neurons):
+    for s in range(num_stimuli):
+        for r in range(num_repetitions):
+            # Extract times from the MATLAB cell
+            times = raw_cell[n, s, r].flatten() if raw_cell[n, s, r].size > 0 else np.array([], dtype=np.float64)
+            
+            # Wrap into SpikeTrain
+            CellMatrix[n, s, r] = SpikeTrain(times, [t1, t2])
         
 # =========================================================================
 # 3. Creation of the pairwise matrix and M matrices (Wilcoxon test)

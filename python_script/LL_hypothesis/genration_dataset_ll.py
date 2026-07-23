@@ -23,7 +23,9 @@ def generate_and_plot_raster_ll(num_stimuli, num_repetitions, num_indi, num_neur
     num_trials = num_stimuli * num_repetitions
     
     # Initialization the 3D matrix ( Neurones x Stimuli x Repetitions)
-    CellMatrix = [[[None for _ in range(num_repetitions)] for _ in range(num_stimuli)] for _ in range(num_neurons)]
+    #CellMatrix = [[[None for _ in range(num_repetitions)] for _ in range(num_stimuli)] for _ in range(num_neurons)]
+    # Remplace ton initialisation par celle-ci au début de ton générateur :
+    CellMatrix = np.empty((num_neurons, num_stimuli, num_repetitions), dtype=object)
     
     # =========================================================================
     # 1. Generation of the Labeled Line Preference Matrix

@@ -23,10 +23,7 @@ def generate_and_plot_raster(num_stimuli, num_repetitions, num_indi, num_coll,
     num_trials = num_stimuli * num_repetitions
     
     # 3D matrix : [neurone]x[stimulus]x[repetition]
-    CellMatrix = [
-        [[None for _ in range(num_repetitions)] for _ in range(num_stimuli)]
-        for _ in range(num_neurons)
-    ]
+    CellMatrix = np.empty((num_neurons, num_stimuli, num_repetitions), dtype=object)
     
     ## 1. Generation of COLLECTIVE coding neurons (Channels: 0 to num_coll-1)
     for st in range(num_stimuli):

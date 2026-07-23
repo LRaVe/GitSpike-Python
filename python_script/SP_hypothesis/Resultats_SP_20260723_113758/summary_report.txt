@@ -1,0 +1,21 @@
+==================================================
+      SIMULATION REPORT - SP HYPOTHESIS           
+      Date: 2026-07-23 11:38:09
+==================================================
+
+--- Simulation Parameters ---
+Neurons (N): 7 (Coll: 3, Indi: 0)
+Stimuli (S): 4 | Repetitions (R): 5
+Time window: [0.0, 1.0] s | Base rate: 20 Hz
+
+--- Algorithms Results ---
+1. Brute Force :
+   Best Subpop: [1, 2, 3]
+   Max Perf P : 0.2901
+
+2. Bottom-Up :
+   Best Subpop: [3, 1, 2]
+   Max Perf P : 0.2901
+
+3. Simulated Annealing :
+   Iterations : 1015
